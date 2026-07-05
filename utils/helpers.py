@@ -2,7 +2,7 @@ from aiogram import Bot
 from aiogram.types import ChatMember
 from database.db import get_required_channels, update_required_channel_invite_link
 
-ADMIN_IDS = [1490312159, 8089597197]
+ADMIN_IDS = [8089597197]
 
 
 def is_admin(user_id: int) -> bool:
