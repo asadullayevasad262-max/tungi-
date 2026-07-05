@@ -15,7 +15,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = "8174608066:AAGBd7qUsQ0-OyNbjvug_ww6ocAwMIMGwOE"
+BOT_TOKEN = "8224560580:AAETtCPJpt5UdAOqa2GnHxkD50cJ0o0cjOM"
 
 
 async def main():
