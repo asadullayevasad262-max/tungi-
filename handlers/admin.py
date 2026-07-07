@@ -28,6 +28,7 @@ class AdminStates(StatesGroup):
     setting_pts_amount = State()
     broadcasting = State()
     setting_requests_count = State()
+    setting_referral_pts = State()
 
 
 TEXT_KEYS = {
@@ -802,6 +803,41 @@ async def toggle_captcha(callback: CallbackQuery, **kwargs):
     new = "0" if current == "1" else "1"
     await set_setting("captcha_enabled", new)
     await admin_settings(callback)
+
+
+@router.callback_query(F.data == "set_referral_pts")
+@admin_only
+async def set_referral_pts_start(callback: CallbackQuery, state: FSMContext, **kwargs):
+    current = await get_setting("points_per_referral")
+    await state.set_state(AdminStates.setting_referral_pts)
+    await callback.message.edit_text(
+        f"👥 <b>Taklif balini o'zgartirish</b>\n\n"
+        f"Hozirgi qiymat: <b>{current}</b>\n\n"
+        "Yangi qiymatni yuboring (son):",
+        reply_markup=back_keyboard(),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.message(AdminStates.setting_referral_pts)
+@admin_only
+async def set_referral_pts_save(message: Message, state: FSMContext, **kwargs):
+    try:
+        value = int(message.text.strip())
+        if value <= 0:
+            raise ValueError
+    except ValueError:
+        await message.answer("❌ Iltimos, musbat son kiriting (masalan: 10).")
+        return
+
+    await set_setting("points_per_referral", str(value))
+    await state.clear()
+    await message.answer(
+        f"✅ Taklif bali <b>{value}</b> ga o'zgartirildi!",
+        reply_markup=admin_main_keyboard(),
+        parse_mode="HTML"
+    )
 
 
 # ── AUTO-DETECT BOT ADDED/REMOVED ───────────────────────────────────────────
